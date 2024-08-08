@@ -46,6 +46,7 @@ class Command(BaseCommand):
         data = response.json()
         for result in data.get("results", []):
             page_id = result["id"]
+            company_name = result["properties"]["Name"]["title"][0]["plain_text"]
             update_response = requests.patch(
                 NOTION_API_UPDATE_URL.format(page_id=page_id),
                 headers=HEADERS,
@@ -60,8 +61,6 @@ class Command(BaseCommand):
                 }
             )
             if update_response.status_code == 200:
-                self.stdout.write(self.style.SUCCESS(f'Task {page_id} marked as no response'))
+                self.stdout.write(self.style.SUCCESS(f'Task {page_id} {company_name} marked as no response'))
             else:
-                self.stdout.write(self.style.ERROR(f'Failed to update task {page_id}'))
-
-
+                self.stdout.write(self.style.ERROR(f'Failed to update task {page_id} {company_name}'))
